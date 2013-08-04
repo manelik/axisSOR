@@ -10,7 +10,7 @@ program main
   real*8 :: Lx,Ly
 
   real*8 :: delta_x,delta_y,rojac, smallpi
-  integer :: Jx,Jy
+  integer :: Jx,Jy,ghost
 
   integer :: m,k
 
@@ -22,6 +22,8 @@ program main
   read(*,*) Jx
   print*, 'dimension Y'
   read(*,*) Jy
+  print*, 'ghost zones'
+  read(*,*) ghost
   print*, 'intervalx'
   read(*,*) delta_x
   print*, 'intervaly'
@@ -31,13 +33,16 @@ program main
   print*, 'Blobs in y direction'
   read(*,*) ny
 
-  allocate( a(Jx,Jy),b(Jx,Jy),c(Jx,Jy),d(Jx,Jy),e(Jx,Jy),&
-       &f(Jx,Jy),u(Jx,Jy),x(Jx,Jy),y(Jx,Jy))
+  allocate( a(1-ghost:Jx,1-ghost:Jy),b(1-ghost:Jx,1-ghost:Jy)&
+       &,c(1-ghost:Jx,1-ghost:Jy),d(1-ghost:Jx,1-ghost:Jy)&
+       &,e(1-ghost:Jx,1-ghost:Jy),f(1-ghost:Jx,1-ghost:Jy)&
+       &,u(1-ghost:Jx,1-ghost:Jy),x(1-ghost:Jx,1-ghost:Jy)&
+       ,y(1-ghost:Jx,1-ghost:Jy))
   
-  do k=1,jy
-     do m=1,jx
+  do k=1-ghost,jy
+     do m=1-ghost,jx
         x(m,k)= delta_x*(-.5d0+dble(m))
-        y(m,k)= delta_y*(-.5d0+dble(k))
+        y(m,k)= delta_y*(dble(k))
      end do
   end do
 
@@ -49,9 +54,9 @@ program main
   u=0.0
 
 !  u = 1.0
-  u(1:Jx,1)=0.d0!log(x(1:J,1)**2+y(1:J,1)**2)
-  u(1:Jx,Jy)=0.d0!log(x(1:J,J)**2+y(1:J,J)**2)
-  u(1,1:Jy)=sin(ny*smallpi/Ly*y(1,1:Jy))!log(x(1,1:J)**2+y(1,1:J)**2)
+!  u(1:Jx,1)=0.d0!log(x(1:J,1)**2+y(1:J,1)**2)
+!  u(1:Jx,Jy)=0.d0!log(x(1:J,J)**2+y(1:J,J)**2)
+!  u(1,1:Jy)=sin(ny*smallpi/Ly*y(1,1:Jy))!log(x(1,1:J)**2+y(1,1:J)**2)
 !  u(Jx,1:Jy)=y(Jx,1:Jy)/Ly!log(x(J,1:J)**2+y(J,1:J)**2)
 
   a=delta_y/delta_x+0.5d0*delta_y/x
@@ -65,17 +70,16 @@ program main
        &  ((1.d0+2.d0*dble(nx))/Lx)*smallpi*sin((1.d0+2.d0*dble(nx))*smallpi/Lx*x) )*sin(dble(ny)*smallpi/Ly*y)
 !  u= sin(nx*smallpi/Lx*x)*sin(ny*smallpi/Ly*y)
 
-
   rojac=( delta_y/delta_x*cos(smallpi/dble(Jx)) &
        &+ delta_x/delta_y*cos(smallpi/dble(Jy)))/&
        &(delta_y/delta_x+delta_x/delta_y)   !1.d0!1.d0-2.d0*3.14159d0/J
 
-  call sor(a,b,c,d,e,f,u,rojac,Jx,Jy)
+  call sor(a,b,c,d,e,f,u,rojac,Jx,Jy,ghost)
 
   open(unit=666,file='out.dat',status='replace')
   
-  do k=1,jy
-     do m=1,jx
+  do k=1-ghost,jy
+     do m=1-ghost,jx
         write(666,*) x(m,k),y(m,k),u(m,k)
      end do
   end do
