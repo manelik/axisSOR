@@ -34,6 +34,7 @@ SUBROUTINE sor(a,b,c,d,e,f,u,rjac,nx,ny,ghost)
   jym2=jymax-2
   jym3=jymax-3
   anormf=sum(abs(f(1:jxm1,1:jym1)))
+  if (anormf==0.d0) anormf= 1.d0 !default tolerance in case of no f input
   !  Compute initial norm of residual and terminate iteration when norm has been reduced by a
   !  factor EPS. This computation assumes initial u is zero.
   omega=1.0

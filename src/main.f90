@@ -54,20 +54,20 @@ program main
   u=0.0
 
 !  u = 1.0
-!  u(1:Jx,1)=0.d0!log(x(1:J,1)**2+y(1:J,1)**2)
+!  u(0:Jx,1)=0.d0!log(x(1:J,1)**2+y(1:J,1)**2)
 !  u(1:Jx,Jy)=0.d0!log(x(1:J,J)**2+y(1:J,J)**2)
-!  u(1,1:Jy)=sin(ny*smallpi/Ly*y(1,1:Jy))!log(x(1,1:J)**2+y(1,1:J)**2)
+!  u(1,1:Jy)=!log(x(1,1:J)**2+y(1,1:J)**2)
 !  u(Jx,1:Jy)=y(Jx,1:Jy)/Ly!log(x(J,1:J)**2+y(J,1:J)**2)
 
   a=delta_y/delta_x+0.5d0*delta_y/x
   b=delta_y/delta_x-0.5d0*delta_y/x
   c=delta_x/delta_y
   d=delta_x/delta_y
-  e=-2.d0*(delta_y/delta_x+delta_x/delta_y)
+  e=-2.d0*(delta_y/delta_x+delta_x/delta_y)!-delta_x*delta_y
 
-  f= -delta_x*delta_y* (( ((1.d0+2.d0*dble(nx))/Lx)**2+(dble(ny)/Ly)**2)*smallpi**2*&
-       &cos((1.d0+2.d0*dble(nx))*smallpi/Lx*x) +&
-       &  ((1.d0+2.d0*dble(nx))/Lx)*smallpi*sin((1.d0+2.d0*dble(nx))*smallpi/Lx*x) )*sin(dble(ny)*smallpi/Ly*y)
+  f= -delta_x*delta_y* ( ( ((.5d0+dble(nx))/Lx)**2+(dble(ny)/Ly)**2)*smallpi**2*&
+       &cos((.5d0+dble(nx))*smallpi/Lx*x) +&
+       &  ((.5d0+dble(nx))/Lx)*smallpi*sin((.5d0+dble(nx))*smallpi/Lx*x)/x )*sin(dble(ny)*smallpi/Ly*y)
 !  u= sin(nx*smallpi/Lx*x)*sin(ny*smallpi/Ly*y)
 
   rojac=( delta_y/delta_x*cos(smallpi/dble(Jx)) &
@@ -78,7 +78,7 @@ program main
 
   open(unit=666,file='out.dat',status='replace')
   
-  do k=1-ghost,jy
+  do k=0,jy
      do m=1-ghost,jx
         write(666,*) x(m,k),y(m,k),u(m,k)
      end do
