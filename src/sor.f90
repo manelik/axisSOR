@@ -87,13 +87,13 @@ SUBROUTINE sor(a,b,c,d,e,f,u,rjac,nx,ny,ghost,eqsym,rsym,zsym,delta_x,delta_y,x,
 !        print*, 'applying r bc'
         u(jxmax,:)= (2.d0*delta_x*x(jxmax,:)/(x(jxmax,:)**2+y(jxmax,:)**2) &
              &- u(jxmax-2,:)+ 4.d0*u(jxmax-1,:))&
-             /(2.d0*delta_x*x(jxmax,:)/(x(jxmax,:)**2+y(jxmax,:)**2)-3.d0)
+             /(2.d0*delta_x*x(jxmax,:)/(x(jxmax,:)**2+y(jxmax,:)**2)+3.d0)
         
         !upper boundary
 !        print*, 'applying upper bc'
         u(:,jymax)= (2.d0*delta_y*y(:,jymax)/(x(:,jymax)**2+y(:,jymax)**2) &
              &- u(:,jymax-2)+ 4.d0*u(:,jymax-1))&
-             /(2.d0*delta_y*y(:,jymax)/(x(:,jymax)**2+y(:,jymax)**2)-3.d0)
+             /(2.d0*delta_y*y(:,jymax)/(x(:,jymax)**2+y(:,jymax)**2)+3.d0)
         !lower boundary
 !        print*, 'applying lower bc'
         u(:,0)= (2.d0*delta_y*y(:,0)/(x(:,0)**2+y(:,0)**2) &

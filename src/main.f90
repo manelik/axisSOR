@@ -53,7 +53,7 @@ program main
 !  ny = 2
   u=0.0
 
-!  u = 1.0
+  u = 1.0
 !  u(0:Jx,1)=0.d0!log(x(1:J,1)**2+y(1:J,1)**2)
 !  u(1:Jx,Jy)=0.d0!log(x(1:J,J)**2+y(1:J,J)**2)
 !  u(1,1:Jy)=!log(x(1,1:J)**2+y(1,1:J)**2)
@@ -63,11 +63,11 @@ program main
   b=delta_y/delta_x-0.5d0*delta_y/x
   c=delta_x/delta_y
   d=delta_x/delta_y
-  e=-2.d0*(delta_y/delta_x+delta_x/delta_y)!-delta_x*delta_y*exp(-x**2-y**2)
+  e=-2.d0*(delta_y/delta_x+delta_x/delta_y)-delta_x*delta_y*exp(-x**2-y**2)
 
-  f= -delta_x*delta_y* ( ( ((dble(nx))/Lx)**2+(dble(ny)/Ly)**2)*smallpi**2*&
-       &sin((dble(nx))*smallpi/Lx*x) -&
-       &  ((dble(nx))/Lx)*smallpi*cos((dble(nx))*smallpi/Lx*x)/x )*sin(dble(ny)*smallpi/Ly*y)
+  f= 0.d0!-delta_x*delta_y* ( ( ((dble(nx))/Lx)**2+(dble(ny)/Ly)**2)*smallpi**2*&
+!       &sin((dble(nx))*smallpi/Lx*x) -&
+!       &  ((dble(nx))/Lx)*smallpi*cos((dble(nx))*smallpi/Lx*x)/x )*sin(dble(ny)*smallpi/Ly*y)
 
 
   rojac=( delta_y/delta_x*cos(smallpi/dble(Jx)) &
@@ -75,7 +75,7 @@ program main
        &(delta_y/delta_x+delta_x/delta_y)   !1.d0!1.d0-2.d0*3.14159d0/J
 
   print*, 'entering SOR'
-  call sor(a,b,c,d,e,f,u,rojac,Jx,Jy,ghost,.true.,-1,-1,delta_x,delta_y,x,y,.false.)
+  call sor(a,b,c,d,e,f,u,rojac,Jx,Jy,ghost,.true.,+1,+1,delta_x,delta_y,x,y,.true.)
 
   open(unit=666,file='out.dat',status='replace')
   
