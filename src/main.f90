@@ -42,7 +42,7 @@ program main
   do k=1-ghost,jy
      do m=1-ghost,jx
         x(m,k)= delta_x*(-.5d0+dble(m))
-        y(m,k)= delta_y*(dble(k))
+        y(m,k)= delta_y*(-.5d0+dble(k))
      end do
   end do
 
@@ -63,22 +63,23 @@ program main
   b=delta_y/delta_x-0.5d0*delta_y/x
   c=delta_x/delta_y
   d=delta_x/delta_y
-  e=-2.d0*(delta_y/delta_x+delta_x/delta_y)!-delta_x*delta_y
+  e=-2.d0*(delta_y/delta_x+delta_x/delta_y)!-delta_x*delta_y*exp(-x**2-y**2)
 
-  f= -delta_x*delta_y* ( ( ((.5d0+dble(nx))/Lx)**2+(dble(ny)/Ly)**2)*smallpi**2*&
-       &cos((.5d0+dble(nx))*smallpi/Lx*x) +&
-       &  ((.5d0+dble(nx))/Lx)*smallpi*sin((.5d0+dble(nx))*smallpi/Lx*x)/x )*sin(dble(ny)*smallpi/Ly*y)
-!  u= sin(nx*smallpi/Lx*x)*sin(ny*smallpi/Ly*y)
+  f= -delta_x*delta_y* ( ( ((dble(nx))/Lx)**2+(dble(ny)/Ly)**2)*smallpi**2*&
+       &sin((dble(nx))*smallpi/Lx*x) -&
+       &  ((dble(nx))/Lx)*smallpi*cos((dble(nx))*smallpi/Lx*x)/x )*sin(dble(ny)*smallpi/Ly*y)
+
 
   rojac=( delta_y/delta_x*cos(smallpi/dble(Jx)) &
        &+ delta_x/delta_y*cos(smallpi/dble(Jy)))/&
        &(delta_y/delta_x+delta_x/delta_y)   !1.d0!1.d0-2.d0*3.14159d0/J
 
-  call sor(a,b,c,d,e,f,u,rojac,Jx,Jy,ghost)
+  print*, 'entering SOR'
+  call sor(a,b,c,d,e,f,u,rojac,Jx,Jy,ghost,.true.,-1,-1,delta_x,delta_y,x,y,.false.)
 
   open(unit=666,file='out.dat',status='replace')
   
-  do k=0,jy
+  do k=1-ghost,jy
      do m=1-ghost,jx
         write(666,*) x(m,k),y(m,k),u(m,k)
      end do
